@@ -6,7 +6,6 @@
 #define MAN_MODULE
 
 #pragma comment(lib, "Advapi32.lib")
-
 #include <stdio.h>
 #include <windows.h>
 #include <lm.h>

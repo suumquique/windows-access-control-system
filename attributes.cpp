@@ -3,4 +3,5 @@
 
 int main(){
 	HANDLE fileDescriptor = createFileAndGetDescriptor();
+	printFileSecurityInfo(fileDescriptor);
 }
