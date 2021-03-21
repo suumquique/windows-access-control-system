@@ -341,3 +341,4 @@ healthchecksdb
 
 *.exe
 test*
+*.txt
