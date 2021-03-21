@@ -46,6 +46,7 @@ HANDLE createFileAndGetDescriptor() {
 		printf("The last error code: %u\n", dwErrCode);
 		exit(dwErrCode);
 	}
+
 	// проверяем структуру дескриптора безопасности
 	if (!IsValidSecurityDescriptor(&sd)) {
 		dwErrCode = GetLastError();
@@ -58,7 +59,9 @@ HANDLE createFileAndGetDescriptor() {
 	sa.lpSecurityDescriptor = &sd; // устанавливаем адрес SD
 	sa.bInheritHandle = FALSE;
 
-	HANDLE fileHandle = CreateFileW(fileName, GENERIC_READ | GENERIC_WRITE, 0, &sa, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	DWORD dwDesiredAccess = STANDARD_RIGHTS_ALL; // Устанавливаем параметры доступа к файлу
+	DWORD dwShareMode = 0; // Устаналиваем, что доступа к файлу не будет, пока его дескриптор не закрыт
+	HANDLE fileHandle = CreateFileW(fileName, dwDesiredAccess, dwShareMode, &sa, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (fileHandle == INVALID_HANDLE_VALUE) {
 		wprintf(L"Cannot create file with current security attributes.\n");
 		exit(1);
