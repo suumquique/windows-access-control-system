@@ -45,6 +45,66 @@ Account getUserAccountFromSID(PSID lpSID) {
 	return currentSIDOwner;
 }
 
+void printAllSecurityDescriptorInformation(PSECURITY_DESCRIPTOR securityDescriptorPtr) {
+	BOOL bOwnerDefaulted = FALSE; // флаг владельца по умолчанию
+	BOOL bGroupDefaulted = FALSE; // флаг первичной группы по умолчанию
+	PSID pSidOwner = NULL; // указатель на SID владельца объекта 
+	PSID pSidGroup = NULL; // указатель на SID первичной группы объекта
+	SECURITY_DESCRIPTOR_CONTROL wControl; // управляющие флаги из SD 
+	DWORD dwRevision; // версия дескриптора безопасности 
+	DWORD dwRetCode; // код возврата
+
+	// Получаем SD владельца объекта
+	if (!GetSecurityDescriptorOwner(
+		securityDescriptorPtr,
+		&pSidOwner,
+		&bOwnerDefaulted))
+	{
+		printf("Get security descriptor owner failed.\n");
+		dwRetCode = GetLastError();
+		printf("Error code: %u\n", dwRetCode);
+		exit(dwRetCode);
+	}
+	// получаем SD первичной группы владельца объекта
+	if (!GetSecurityDescriptorGroup(
+		securityDescriptorPtr,
+		&pSidGroup,
+		&bGroupDefaulted))
+	{
+		printf("Get security descriptor group failed.\n");
+		dwRetCode = GetLastError();
+		printf("Error code: %u\n", dwRetCode);
+		exit(dwRetCode);
+	}
+	
+	wprintf(L"File owner %s set by default\n", bOwnerDefaulted ? L"is" : L"isn`t");
+	wprintf(L"File group-owner %s set by default\n", bGroupDefaulted ? L"is" : L"isn`t");
+
+	if (!GetSecurityDescriptorControl(
+		securityDescriptorPtr,
+		&wControl,
+		&dwRevision))
+	{
+		dwRetCode = GetLastError();
+		printf("Get security descriptor control failed.\n");
+		printf("Error code: %u\n", dwRetCode);
+		exit(dwRetCode);
+	}
+	printf("\nThe following control flags are set: \n");
+	// определяем информацию из управляющего слова
+	if (wControl & SE_DACL_AUTO_INHERITED)
+		printf("SE_DACL_AUTO_INHERITED\n");
+	if (wControl & SE_DACL_DEFAULTED)
+		printf("SE_DACL_DEFAULTED\n");
+	if (wControl & SE_DACL_PRESENT)
+		printf("SE_DACL_PRESENT\n");
+	if (wControl & SE_DACL_PROTECTED)
+		printf("SE_DACL_PROTECTED\n");
+	// выводим на печать версию дескриптора безопасности
+	printf("\nDescriptor revision: %u\n", dwRevision);
+
+}
+
 void printFileSecurityInfo(HANDLE fileDescriptor) {
 	PSID pSidOwner; // указатель на SID владельца объекта
 	PSID pSidGroup; // указатель на SID первичной группы объекта
@@ -56,7 +116,7 @@ void printFileSecurityInfo(HANDLE fileDescriptor) {
 	dwRetCode = GetSecurityInfo(
 		fileDescriptor, // дескриптор файла
 		SE_FILE_OBJECT, // объект файл
-		GROUP_SECURITY_INFORMATION | OWNER_SECURITY_INFORMATION,
+		GROUP_SECURITY_INFORMATION | OWNER_SECURITY_INFORMATION | DACL_SECURITY_INFORMATION | UNPROTECTED_DACL_SECURITY_INFORMATION,
 		&pSidOwner, // адрес указателя на SID владельца
 		&pSidGroup, // адрес указателя на первичную группу
 		NULL, // указатель на DACL не нужен
@@ -93,6 +153,7 @@ void printFileSecurityInfo(HANDLE fileDescriptor) {
 	// Печатаем юзернейм и имя домена
 	wprintf(L"File owner name: %s\n", fileOwner.userName);
 	wprintf(L"File owner domain: %s\n", fileOwner.domainName);
+	printAllSecurityDescriptorInformation(pSecurityDescriptor);
 
 	// освобождаем память для дескриптора
 	LocalFree(pSecurityDescriptor);
