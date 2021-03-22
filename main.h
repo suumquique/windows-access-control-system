@@ -20,6 +20,6 @@ typedef struct _account {
 
 HANDLE createFileAndGetDescriptor();
 Account getUserAccountFromSID(PSID lpSID);
-void printFileSecurityInfo(HANDLE fileDescriptor);
+DWORD printFileSecurityInfo(HANDLE fileDescriptor);
 
 #endif // !MAIN_MODULE
