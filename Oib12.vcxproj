@@ -23,7 +23,6 @@
     <ClCompile Include="change.cpp" />
     <ClCompile Include="create.cpp" />
     <ClCompile Include="print.cpp" />
-    <ClCompile Include="write.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h" />
