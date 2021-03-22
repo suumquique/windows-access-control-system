@@ -116,7 +116,7 @@ void printFileSecurityInfo(HANDLE fileDescriptor) {
 	dwRetCode = GetSecurityInfo(
 		fileDescriptor, // дескриптор файла
 		SE_FILE_OBJECT, // объект файл
-		GROUP_SECURITY_INFORMATION | OWNER_SECURITY_INFORMATION | DACL_SECURITY_INFORMATION | UNPROTECTED_DACL_SECURITY_INFORMATION,
+		GROUP_SECURITY_INFORMATION | OWNER_SECURITY_INFORMATION | DACL_SECURITY_INFORMATION,
 		&pSidOwner, // адрес указателя на SID владельца
 		&pSidGroup, // адрес указателя на первичную группу
 		NULL, // указатель на DACL не нужен
