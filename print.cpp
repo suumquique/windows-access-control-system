@@ -45,12 +45,14 @@ Account getUserAccountFromSID(PSID lpSID) {
 	return currentSIDOwner;
 }
 
-void printAllSecurityDescriptorInformation(PSECURITY_DESCRIPTOR securityDescriptorPtr) {
+DWORD printAllSecurityDescriptorInformation(PSECURITY_DESCRIPTOR securityDescriptorPtr) {
 	BOOL bOwnerDefaulted = FALSE; // флаг владельца по умолчанию
 	BOOL bGroupDefaulted = FALSE; // флаг первичной группы по умолчанию
 	PSID pSidOwner = NULL; // указатель на SID владельца объекта 
 	PSID pSidGroup = NULL; // указатель на SID первичной группы объекта
 	SECURITY_DESCRIPTOR_CONTROL wControl; // управл€ющие флаги из SD 
+	LPWSTR StringSecurityDescriptor; // строка с SD
+	DWORD StringSecurityDescriptorLen; // длина строки с SD 
 	DWORD dwRevision; // верси€ дескриптора безопасности 
 	DWORD dwRetCode; // код возврата
 
@@ -63,7 +65,7 @@ void printAllSecurityDescriptorInformation(PSECURITY_DESCRIPTOR securityDescript
 		printf("Get security descriptor owner failed.\n");
 		dwRetCode = GetLastError();
 		printf("Error code: %u\n", dwRetCode);
-		exit(dwRetCode);
+		return dwRetCode;
 	}
 	// получаем SD первичной группы владельца объекта
 	if (!GetSecurityDescriptorGroup(
@@ -74,7 +76,7 @@ void printAllSecurityDescriptorInformation(PSECURITY_DESCRIPTOR securityDescript
 		printf("Get security descriptor group failed.\n");
 		dwRetCode = GetLastError();
 		printf("Error code: %u\n", dwRetCode);
-		exit(dwRetCode);
+		return dwRetCode;
 	}
 	
 	wprintf(L"File owner %s set by default\n", bOwnerDefaulted ? L"is" : L"isn`t");
@@ -88,7 +90,7 @@ void printAllSecurityDescriptorInformation(PSECURITY_DESCRIPTOR securityDescript
 		dwRetCode = GetLastError();
 		printf("Get security descriptor control failed.\n");
 		printf("Error code: %u\n", dwRetCode);
-		exit(dwRetCode);
+		return dwRetCode;
 	}
 	printf("\nThe following control flags are set: \n");
 	// определ€ем информацию из управл€ющего слова
@@ -102,10 +104,26 @@ void printAllSecurityDescriptorInformation(PSECURITY_DESCRIPTOR securityDescript
 		printf("SE_DACL_PROTECTED\n");
 	// выводим на печать версию дескриптора безопасности
 	printf("\nDescriptor revision: %u\n", dwRevision);
+	if (!ConvertSecurityDescriptorToStringSecurityDescriptorW(
+		securityDescriptorPtr, // адрес дескриптора безопасности
+		SDDL_REVISION_1, // верси€ €зыка описани€
+		OWNER_SECURITY_INFORMATION | GROUP_SECURITY_INFORMATION |
+		DACL_SECURITY_INFORMATION | SACL_SECURITY_INFORMATION,
+		&StringSecurityDescriptor, // буфер дл€ строки
+		&StringSecurityDescriptorLen)) // длина буфера
+	{
+		dwRetCode = GetLastError();
+		wprintf(L"Convert security descriptor to string security descriptor failed.");
+		printf("Error code: %u\n", dwRetCode);
+		return dwRetCode;
+	}
+	wprintf(L"String security descriptor length: %u\n",
+		StringSecurityDescriptorLen);
+	wprintf(L"String security desriptor: %s\n", StringSecurityDescriptor);
 
 }
 
-void printFileSecurityInfo(HANDLE fileDescriptor) {
+DWORD printFileSecurityInfo(HANDLE fileDescriptor) {
 	PSID pSidOwner; // указатель на SID владельца объекта
 	PSID pSidGroup; // указатель на SID первичной группы объекта
 	PSECURITY_DESCRIPTOR pSecurityDescriptor; // указатель на SD
@@ -125,13 +143,13 @@ void printFileSecurityInfo(HANDLE fileDescriptor) {
 	if (dwRetCode != ERROR_SUCCESS) {
 		printf("Get named security info failed.\n");
 		printf("Error code: %u\n", dwRetCode);
-		exit(dwRetCode);
+		return dwRetCode;
 	}
 	// преобразуем SID владельца в строку
 	if (!ConvertSidToStringSid(pSidOwner, &lpStringSid)) {
 		printf("Convert SID to string SID failed.");
 		dwRetCode = GetLastError();
-		exit(dwRetCode);
+		return dwRetCode;
 	}
 	// печатаем SID владельца
 	wprintf(L"File owner SID: %s\n", lpStringSid);
@@ -141,7 +159,7 @@ void printFileSecurityInfo(HANDLE fileDescriptor) {
 	if (!ConvertSidToStringSid(pSidGroup, &lpStringSid)) {
 		printf("Convert SID to string SID failed.");
 		dwRetCode = GetLastError();
-		exit(dwRetCode);
+		return dwRetCode;
 	}
 	// печатаем SID первичной группы
 	wprintf(L"File group SID: %s\n", lpStringSid);
