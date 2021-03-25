@@ -1,28 +1,5 @@
 #include "main.h"
 
-PSECURITY_DESCRIPTOR getSecurityDescriptor(HANDLE fileDescriptor) {
-	PSECURITY_DESCRIPTOR pSecurityDescriptor; // указатель на SD
-	DWORD dwRetCode; // код возврата
-
-	// получаем дескриптор безопасности файла
-	dwRetCode = GetSecurityInfo(
-		fileDescriptor, // дескриптор файла
-		SE_FILE_OBJECT, // объект файл
-		GROUP_SECURITY_INFORMATION | OWNER_SECURITY_INFORMATION | DACL_SECURITY_INFORMATION,
-		NULL, // адрес указателя на SID владельца не нужен
-		NULL, // адрес указателя на первичную группу не нужен
-		NULL, // указатель на DACL не нужен
-		NULL, // указатель на SACL не нужен
-		&pSecurityDescriptor); // адрес указателя на SD
-	if (dwRetCode != ERROR_SUCCESS) {
-		printf("Get named security info failed.\n");
-		printf("Error code: %u\n", dwRetCode);
-		exit(1);
-	}
-
-	return pSecurityDescriptor;
-}
-
 PSID getUserSIDByAccountName(wchar_t* accountName) {
 	wchar_t* lpDomainName = NULL;
 	DWORD dwErrCode; // код ошибки
@@ -78,7 +55,7 @@ DWORD changeOwner(HANDLE fileDescriptor) {
 	wchar_t userName[UNLEN]; // Имя нового владельца файла
 	BOOL tryAgain = FALSE; // Спрашивать ли имя нового владельца файла при неудаче
 	DWORD dwErrCode; // Код возврата
-	wprintf(L"\nEnter the username of the new owner of the file : ");
+	wprintf(L"\nEnter the username of the new owner of the file: ");
 	wscanf(L"%s", userName);
 	// Получаем указатель на SID юзера по имени
 	PSID fileOwnerPSID = getUserSIDByAccountName(userName);
@@ -93,22 +70,21 @@ DWORD changeOwner(HANDLE fileDescriptor) {
 		else return 1;
 	}
 
-	// Получаем указатель на дескриптор безопасности файла
-	PSECURITY_DESCRIPTOR fileSecurityDescriptorPtr = getSecurityDescriptor(fileDescriptor);
-
-	if (!IsValidSecurityDescriptor(fileSecurityDescriptorPtr)) {
-		wprintf(L"Invalid security descriptor\n");
-		return NULL;
-	}
-
-	// Устанавливаем нового владельца файла по SID пользователя
-	if (!SetSecurityDescriptorOwner(fileSecurityDescriptorPtr, fileOwnerPSID, FALSE)) {
-		dwErrCode = GetLastError();
-		wprintf(L"Cannot set this user as new file owner.\n");
-		wprintf(L"Error code: %d\n", dwErrCode);
+	// устанавливаем нового владельца файла
+	dwErrCode = SetSecurityInfo(
+		fileDescriptor, // дескриптор файла
+		SE_FILE_OBJECT, // объект файл
+		OWNER_SECURITY_INFORMATION, // изменяем только имя владельца файла
+		fileOwnerPSID, // адрес на SID нового владельца
+		NULL, // первичную группу не изменяем
+		NULL, // DACL не изменяем
+		NULL); // SACL не изменяем
+	if (dwErrCode != ERROR_SUCCESS)
+	{
+		printf("Set named security info failed.\n");
+		printf("Error code: %u\n", dwErrCode);
 		return dwErrCode;
 	}
-	else wprintf(L"New file owner successfully assigned\n");
-
+	printf("The new owner of the file is set.\n");
 
 }
