@@ -12,6 +12,7 @@ int main(){
 	HANDLE fileDescriptor = createFileAndGetDescriptor();
 	printFileSecurityInfo(fileDescriptor);
 	changeOwner(fileDescriptor);
+	system("pause");
 }
 
 DWORD getAccessToSACL() {
