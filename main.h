@@ -1,4 +1,4 @@
-#ifndef UNICODE
+﻿#ifndef UNICODE
 #define UNICODE
 #endif
 
@@ -20,6 +20,10 @@ typedef struct _account {
 
 HANDLE createFileAndGetDescriptor();
 Account getUserAccountFromSID(PSID lpSID);
+PSID getUserSIDByAccountName(wchar_t* accountName);
 DWORD printFileSecurityInfo(HANDLE fileDescriptor);
+DWORD changeOwner(HANDLE fileDescriptor);
+PSECURITY_DESCRIPTOR getSecurityDescriptor(HANDLE fileDescriptor);
+DWORD getAccessToSACL();
 
 #endif // !MAIN_MODULE
