@@ -59,7 +59,7 @@ HANDLE createFileAndGetDescriptor() {
 	sa.lpSecurityDescriptor = &sd; // устанавливаем адрес SD
 	sa.bInheritHandle = FALSE;
 
-	DWORD dwDesiredAccess = STANDARD_RIGHTS_ALL | GENERIC_ALL; // Устанавливаем параметры доступа к файлу
+	DWORD dwDesiredAccess = STANDARD_RIGHTS_ALL | GENERIC_ALL | ACCESS_SYSTEM_SECURITY; // Устанавливаем параметры доступа к файлу
 	DWORD dwShareMode = 0; // Устаналиваем, что доступа к файлу не будет, пока его дескриптор не закрыт
 	HANDLE fileHandle = CreateFileW(fileName, dwDesiredAccess, dwShareMode, &sa, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (fileHandle == INVALID_HANDLE_VALUE) {
