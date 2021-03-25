@@ -102,6 +102,20 @@ DWORD printAllSecurityDescriptorInformation(PSECURITY_DESCRIPTOR securityDescrip
 		printf("SE_DACL_PRESENT\n");
 	if (wControl & SE_DACL_PROTECTED)
 		printf("SE_DACL_PROTECTED\n");
+	if (wControl & SE_GROUP_DEFAULTED)
+		printf("SE_GROUP_DEFAULTED\n");
+	if (wControl & SE_OWNER_DEFAULTED)
+		printf("SE_OWNER_DEFAULTED\n");
+	if (wControl & SE_SACL_AUTO_INHERITED)
+		printf("SE_SACL_AUTO_INHERITED\n");
+	if (wControl & SE_SACL_DEFAULTED)
+		printf("SE_SACL_DEFAULTED\n");
+	if (wControl & SE_SACL_PRESENT)
+		printf("SE_SACL_PRESENT\n");
+	if (wControl & SE_SACL_PROTECTED)
+		printf("SE_SACL_PROTECTED\n");
+	if (wControl & SE_SELF_RELATIVE)
+		printf("SE_SELF_RELATIVE\n");
 	// выводим на печать версию дескриптора безопасности
 	printf("\nDescriptor revision: %u\n", dwRevision);
 	if (!ConvertSecurityDescriptorToStringSecurityDescriptorW(
@@ -134,7 +148,9 @@ DWORD printFileSecurityInfo(HANDLE fileDescriptor) {
 	dwRetCode = GetSecurityInfo(
 		fileDescriptor, // дескриптор файла
 		SE_FILE_OBJECT, // объект файл
-		GROUP_SECURITY_INFORMATION | OWNER_SECURITY_INFORMATION | DACL_SECURITY_INFORMATION,
+		GROUP_SECURITY_INFORMATION | OWNER_SECURITY_INFORMATION | DACL_SECURITY_INFORMATION | SACL_SECURITY_INFORMATION | 
+		BACKUP_SECURITY_INFORMATION | ATTRIBUTE_SECURITY_INFORMATION | LABEL_SECURITY_INFORMATION | PROTECTED_DACL_SECURITY_INFORMATION |
+		PROTECTED_SACL_SECURITY_INFORMATION | SCOPE_SECURITY_INFORMATION,
 		&pSidOwner, // адрес указателя на SID владельца
 		&pSidGroup, // адрес указателя на первичную группу
 		NULL, // указатель на DACL не нужен
