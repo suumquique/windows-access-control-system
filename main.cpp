@@ -12,5 +12,8 @@ int main(){
 	HANDLE fileDescriptor = createFileAndGetDescriptor();
 	printFileSecurityInfo(fileDescriptor);
 	changeOwner(fileDescriptor);
+	changeACL(fileDescriptor);
+	wprintf(L"\n\nNew file info after changes:\n\n");
+	printFileSecurityInfo(fileDescriptor);
 	system("pause");
 }

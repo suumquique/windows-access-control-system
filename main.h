@@ -24,6 +24,8 @@ PSID getUserSIDByAccountName(wchar_t* accountName);
 DWORD printFileSecurityInfo(HANDLE fileDescriptor);
 DWORD changeOwner(HANDLE fileDescriptor);
 DWORD getAccessToSACL();
+DWORD changeACL(HANDLE fileDescriptor);
 PISECURITY_DESCRIPTOR getSecurityDescriptor(HANDLE fileDescriptor);
+DWORD printAllSecurityDescriptorInformation(PSECURITY_DESCRIPTOR securityDescriptorPtr);
 
 #endif // !MAIN_MODULE
