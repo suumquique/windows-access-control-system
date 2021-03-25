@@ -87,4 +87,5 @@ DWORD changeOwner(HANDLE fileDescriptor) {
 	}
 	printf("The new owner of the file is set.\n");
 
+	return ERROR_SUCCESS;
 }
