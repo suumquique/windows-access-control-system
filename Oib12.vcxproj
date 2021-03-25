@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="attributes.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="change.cpp" />
     <ClCompile Include="create.cpp" />
     <ClCompile Include="print.cpp" />
