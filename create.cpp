@@ -13,8 +13,8 @@ HANDLE createFileAndGetDescriptor() {
 	SECURITY_DESCRIPTOR sd;
 	SECURITY_ATTRIBUTES sa;
 
-	DWORD dwErrCode; // код возврата
- // инициализируем версию дескриптора безопасности
+	DWORD dwErrCode; // РєРѕРґ РІРѕР·РІСЂР°С‚Р°
+ // РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј РІРµСЂСЃРёСЋ РґРµСЃРєСЂРёРїС‚РѕСЂР° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё
 	if (!InitializeSecurityDescriptor(
 		&sd,
 		SECURITY_DESCRIPTOR_REVISION))
@@ -24,22 +24,22 @@ HANDLE createFileAndGetDescriptor() {
 		printf("Error code: %d\n", dwErrCode);
 		exit(dwErrCode);
 	}
-	// устанавливаем SID владельца объекта
+	// СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј SID РІР»Р°РґРµР»СЊС†Р° РѕР±СЉРµРєС‚Р°
 	if (!SetSecurityDescriptorOwner(
-		&sd, // адрес дескриптора безопасности
-		NULL, // не задаем владельца
-		SE_OWNER_DEFAULTED)) // определить владельца по умолчанию
+		&sd, // Р°РґСЂРµСЃ РґРµСЃРєСЂРёРїС‚РѕСЂР° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё
+		NULL, // РЅРµ Р·Р°РґР°РµРј РІР»Р°РґРµР»СЊС†Р°
+		SE_OWNER_DEFAULTED)) // РѕРїСЂРµРґРµР»РёС‚СЊ РІР»Р°РґРµР»СЊС†Р° РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 	{
 		dwErrCode = GetLastError();
 		perror("Set security descriptor owner failed.\n");
 		printf("The last error code: %u\n", dwErrCode);
 		exit(dwErrCode);
 	}
-	// устанавливаем SID первичной группы владельца
+	// СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј SID РїРµСЂРІРёС‡РЅРѕР№ РіСЂСѓРїРїС‹ РІР»Р°РґРµР»СЊС†Р°
 	if (!SetSecurityDescriptorGroup(
-		&sd, // адрес дескриптора безопасности
-		NULL, // не задаем первичную группу
-		SE_GROUP_DEFAULTED)) // определить первичную группу по умолчанию
+		&sd, // Р°РґСЂРµСЃ РґРµСЃРєСЂРёРїС‚РѕСЂР° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё
+		NULL, // РЅРµ Р·Р°РґР°РµРј РїРµСЂРІРёС‡РЅСѓСЋ РіСЂСѓРїРїСѓ
+		SE_GROUP_DEFAULTED)) // РѕРїСЂРµРґРµР»РёС‚СЊ РїРµСЂРІРёС‡РЅСѓСЋ РіСЂСѓРїРїСѓ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 	{
 		dwErrCode = GetLastError();
 		perror("Set security descriptor group failed.\n");
@@ -47,20 +47,20 @@ HANDLE createFileAndGetDescriptor() {
 		exit(dwErrCode);
 	}
 
-	// проверяем структуру дескриптора безопасности
+	// РїСЂРѕРІРµСЂВ¤РµРј СЃС‚СЂСѓРєС‚СѓСЂСѓ РґРµСЃРєСЂРёРїС‚РѕСЂР° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё
 	if (!IsValidSecurityDescriptor(&sd)) {
 		dwErrCode = GetLastError();
 		perror("Security descriptor is invalid.\n");
 		printf("The last error code: %u\n", dwErrCode);
 		exit(dwErrCode);
 	}
-	// инициализируем атрибуты безопасности
-	sa.nLength = sizeof(sa); // устанавливаем длину атрибутов защиты
-	sa.lpSecurityDescriptor = &sd; // устанавливаем адрес SD
+	// РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј Р°С‚СЂРёР±СѓС‚С‹ Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё
+	sa.nLength = sizeof(sa); // СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј РґР»РёРЅСѓ Р°С‚СЂРёР±СѓС‚РѕРІ Р·Р°С‰РёС‚С‹
+	sa.lpSecurityDescriptor = &sd; // СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј Р°РґСЂРµСЃ SD
 	sa.bInheritHandle = FALSE;
 
-	DWORD dwDesiredAccess = STANDARD_RIGHTS_ALL | GENERIC_ALL | ACCESS_SYSTEM_SECURITY; // Устанавливаем параметры доступа к файлу
-	DWORD dwShareMode = 0; // Устаналиваем, что доступа к файлу не будет, пока его дескриптор не закрыт
+	DWORD dwDesiredAccess = STANDARD_RIGHTS_ALL | GENERIC_ALL | ACCESS_SYSTEM_SECURITY; // вЂќСЃС‚Р°РЅР°РІР»РёРІР°РµРј РїР°СЂР°РјРµС‚СЂС‹ РґРѕСЃС‚СѓРїР° Рє С„Р°Р№Р»Сѓ
+	DWORD dwShareMode = 0; // вЂќСЃС‚Р°РЅР°Р»РёРІР°РµРј, С‡С‚Рѕ РґРѕСЃС‚СѓРїР° Рє С„Р°Р№Р»Сѓ РЅРµ Р±СѓРґРµС‚, РїРѕРєР° РµРіРѕ РґРµСЃРєСЂРёРїС‚РѕСЂ РЅРµ Р·Р°РєСЂС‹С‚
 	HANDLE fileHandle = CreateFileW(fileName, dwDesiredAccess, dwShareMode, &sa, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (fileHandle == INVALID_HANDLE_VALUE) {
 		wprintf(L"Cannot create file with current security attributes.\n");

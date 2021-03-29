@@ -2,45 +2,45 @@
 
 PSID getUserSIDByAccountName(wchar_t* accountName) {
 	wchar_t* lpDomainName = NULL;
-	DWORD dwErrCode; // êîä îøèáêè
-	DWORD dwLengthOfSID = 0; // äëèíà SID
+	DWORD dwErrCode; // ÐºÐ¾Ð´ Ð¾ÑˆÐ¸Ð±ÐºÐ¸
+	DWORD dwLengthOfSID = 0; // Ð´Ð»Ð¸Ð½Ð° SID
 	DWORD dwDomainLength = 0;
-	DWORD dwLengthOfUserName = UNLEN; // äëèíà èìåíè ó÷åòíîé çàïèñè
-	SID* lpSID = NULL; // óêàçàòåëü íà SID
-	SID_NAME_USE type_of_SID; // òèï ó÷åòíîé çàïèñè
+	DWORD dwLengthOfUserName = UNLEN; // Ð´Ð»Ð¸Ð½Ð° Ð¸Ð¼ÐµÐ½Ð¸ ÑƒÑ‡ÐµÑ‚Ð½Ð¾Ð¹ Ð·Ð°Ð¿Ð¸ÑÐ¸
+	SID* lpSID = NULL; // ÑƒÐºÐ°Ð·Ð°Ñ‚ÐµÐ»ÑŒ Ð½Ð° SID
+	SID_NAME_USE type_of_SID; // Ñ‚Ð¸Ð¿ ÑƒÑ‡ÐµÑ‚Ð½Ð¾Ð¹ Ð·Ð°Ð¿Ð¸ÑÐ¸
 
-	// îïðåäåëÿåì äëèíó SID ïîëüçîâàòåëÿ
+	// Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»ÑÐµÐ¼ Ð´Ð»Ð¸Ð½Ñƒ SID Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ
 	if (!LookupAccountName(
-		NULL, // èùåì èìÿ íà ëîêàëüíîì êîìïüþòåðå
-		accountName, // èìÿ ïîëüçîâàòåëÿ
-		NULL, // îïðåäåëÿåì äëèíó SID 
-		&dwLengthOfSID, // äëèíà SID
-		lpDomainName, // îïðåäåëÿåì èìÿ äîìåíà
-		&dwDomainLength, // äëèíà èìåíè äîìåíà
-		&type_of_SID)) // òèï ó÷åòíîé çàïèñè
+		NULL, // Ð¸Ñ‰ÐµÐ¼ Ð¸Ð¼Ñ Ð½Ð° Ð»Ð¾ÐºÐ°Ð»ÑŒÐ½Ð¾Ð¼ ÐºÐ¾Ð¼Ð¿ÑŒÑŽÑ‚ÐµÑ€Ðµ
+		accountName, // Ð¸Ð¼Ñ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ
+		NULL, // Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»ÑÐµÐ¼ Ð´Ð»Ð¸Ð½Ñƒ SID 
+		&dwLengthOfSID, // Ð´Ð»Ð¸Ð½Ð° SID
+		lpDomainName, // Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»ÑÐµÐ¼ Ð¸Ð¼Ñ Ð´Ð¾Ð¼ÐµÐ½Ð°
+		&dwDomainLength, // Ð´Ð»Ð¸Ð½Ð° Ð¸Ð¼ÐµÐ½Ð¸ Ð´Ð¾Ð¼ÐµÐ½Ð°
+		&type_of_SID)) // Ñ‚Ð¸Ð¿ ÑƒÑ‡ÐµÑ‚Ð½Ð¾Ð¹ Ð·Ð°Ð¿Ð¸ÑÐ¸
 	{
 		dwErrCode = GetLastError();
 		if (dwErrCode == ERROR_INSUFFICIENT_BUFFER) {
-			// ðàñïðåäåëÿåì ïàìÿòü äëÿ SID
+			// Ñ€Ð°ÑÐ¿Ñ€ÐµÐ´ÐµÐ»ÑÐµÐ¼ Ð¿Ð°Ð¼ÑÑ‚ÑŒ Ð´Ð»Ñ SID
 			lpSID = (SID*) new char[dwLengthOfSID];
 			lpDomainName = new wchar_t[dwDomainLength];
 		}
 		else {
-			// âûõîäèì èç ïðîãðàììû
+			// Ð²Ñ‹Ñ…Ð¾Ð´Ð¸Ð¼ Ð¸Ð· Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ñ‹
 			printf("Lookup account name failed.\n");
 			printf("Error code: %d\n", dwErrCode);
 			return NULL;
 		}
 	}
-	// îïðåäåëÿåì SID è èìÿ äîìåíà ïîëüçîâàòåëÿ
+	// Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»ÑÐµÐ¼ SID Ð¸ Ð¸Ð¼Ñ Ð´Ð¾Ð¼ÐµÐ½Ð° Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ
 	if (!LookupAccountNameW(
-		NULL, // èùåì èìÿ íà ëîêàëüíîì êîìïüþòåðå
-		accountName, // èìÿ ïîëüçîâàòåëÿ
-		lpSID, // óêàçàòåëü íà SID
-		&dwLengthOfSID, // äëèíà SID
-		lpDomainName, // äîìåí íå íóæåí
-		&dwDomainLength, // äëèíó äëìåíà íå óêàçûâàåì
-		&type_of_SID)) // òèï ó÷åòíîé çàïèñè
+		NULL, // Ð¸Ñ‰ÐµÐ¼ Ð¸Ð¼Ñ Ð½Ð° Ð»Ð¾ÐºÐ°Ð»ÑŒÐ½Ð¾Ð¼ ÐºÐ¾Ð¼Ð¿ÑŒÑŽÑ‚ÐµÑ€Ðµ
+		accountName, // Ð¸Ð¼Ñ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ
+		lpSID, // ÑƒÐºÐ°Ð·Ð°Ñ‚ÐµÐ»ÑŒ Ð½Ð° SID
+		&dwLengthOfSID, // Ð´Ð»Ð¸Ð½Ð° SID
+		lpDomainName, // Ð´Ð¾Ð¼ÐµÐ½ Ð½Ðµ Ð½ÑƒÐ¶ÐµÐ½
+		&dwDomainLength, // Ð´Ð»Ð¸Ð½Ñƒ Ð´Ð»Ð¼ÐµÐ½Ð° Ð½Ðµ ÑƒÐºÐ°Ð·Ñ‹Ð²Ð°ÐµÐ¼
+		&type_of_SID)) // Ñ‚Ð¸Ð¿ ÑƒÑ‡ÐµÑ‚Ð½Ð¾Ð¹ Ð·Ð°Ð¿Ð¸ÑÐ¸
 	{
 		dwErrCode = GetLastError();
 		printf("Lookup account name failed.\n");
@@ -52,14 +52,14 @@ PSID getUserSIDByAccountName(wchar_t* accountName) {
 }
 
 DWORD changeOwner(HANDLE fileDescriptor) {
-	wchar_t userName[UNLEN]; // Èìÿ íîâîãî âëàäåëüöà ôàéëà
-	BOOL tryAgain = FALSE; // Ñïðàøèâàòü ëè èìÿ íîâîãî âëàäåëüöà ôàéëà ïðè íåóäà÷å
-	DWORD dwErrCode; // Êîä âîçâðàòà
+	wchar_t userName[UNLEN]; // Ð˜Ð¼Ñ Ð½Ð¾Ð²Ð¾Ð³Ð¾ Ð²Ð»Ð°Ð´ÐµÐ»ÑŒÑ†Ð° Ñ„Ð°Ð¹Ð»Ð°
+	BOOL tryAgain = FALSE; // Ð¡Ð¿Ñ€Ð°ÑˆÐ¸Ð²Ð°Ñ‚ÑŒ Ð»Ð¸ Ð¸Ð¼Ñ Ð½Ð¾Ð²Ð¾Ð³Ð¾ Ð²Ð»Ð°Ð´ÐµÐ»ÑŒÑ†Ð° Ñ„Ð°Ð¹Ð»Ð° Ð¿Ñ€Ð¸ Ð½ÐµÑƒÐ´Ð°Ñ‡Ðµ
+	DWORD dwErrCode; // ÐšÐ¾Ð´ Ð²Ð¾Ð·Ð²Ñ€Ð°Ñ‚Ð°
 	wprintf(L"\nEnter the username of the new owner of the file: ");
 	wscanf(L"%s", userName);
-	// Ïîëó÷àåì óêàçàòåëü íà SID þçåðà ïî èìåíè
+	// ÐŸÐ¾Ð»ÑƒÑ‡Ð°ÐµÐ¼ ÑƒÐºÐ°Ð·Ð°Ñ‚ÐµÐ»ÑŒ Ð½Ð° SID ÑŽÐ·ÐµÑ€Ð° Ð¿Ð¾ Ð¸Ð¼ÐµÐ½Ð¸
 	PSID fileOwnerPSID = getUserSIDByAccountName(userName);
-	// Åñëè èìÿ ââåäåíî íåâåðíî, ñïðàøèâàåì ïîëüçîâàòåëÿ, ïîïðîáîâàòü ëè åùå ðàç
+	// Ð•ÑÐ»Ð¸ Ð¸Ð¼Ñ Ð²Ð²ÐµÐ´ÐµÐ½Ð¾ Ð½ÐµÐ²ÐµÑ€Ð½Ð¾, ÑÐ¿Ñ€Ð°ÑˆÐ¸Ð²Ð°ÐµÐ¼ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ, Ð¿Ð¾Ð¿Ñ€Ð¾Ð±Ð¾Ð²Ð°Ñ‚ÑŒ Ð»Ð¸ ÐµÑ‰Ðµ Ñ€Ð°Ð·
 	while (fileOwnerPSID == NULL) {
 		wprintf(L"Incorrect account name. Try again? Yes - 1, No - 0: ");
 		wscanf(L"%d", &tryAgain);
@@ -70,17 +70,17 @@ DWORD changeOwner(HANDLE fileDescriptor) {
 		}
 		else return 1;
 	}
-	getwchar(); // Ñ÷èòûâàåì îñòàâøèéñÿ â ïîòîêå ïåðåíîñ ñòðîêè
+	getwchar(); // Ð¡Ñ‡Ð¸Ñ‚Ñ‹Ð²Ð°ÐµÐ¼ Ð¾ÑÑ‚Ð°Ð²ÑˆÐ¸Ð¹ÑÑ Ð² Ð¿Ð¾Ñ‚Ð¾ÐºÐµ Ð¿ÐµÑ€ÐµÐ½Ð¾Ñ ÑÑ‚Ñ€Ð¾ÐºÐ¸
 
-	// óñòàíàâëèâàåì íîâîãî âëàäåëüöà ôàéëà
+	// ÑƒÑÑ‚Ð°Ð½Ð°Ð²Ð»Ð¸Ð²Ð°ÐµÐ¼ Ð½Ð¾Ð²Ð¾Ð³Ð¾ Ð²Ð»Ð°Ð´ÐµÐ»ÑŒÑ†Ð° Ñ„Ð°Ð¹Ð»Ð°
 	dwErrCode = SetSecurityInfo(
-		fileDescriptor, // äåñêðèïòîð ôàéëà
-		SE_FILE_OBJECT, // îáúåêò ôàéë
-		OWNER_SECURITY_INFORMATION, // èçìåíÿåì òîëüêî èìÿ âëàäåëüöà ôàéëà
-		fileOwnerPSID, // àäðåñ íà SID íîâîãî âëàäåëüöà
-		NULL, // ïåðâè÷íóþ ãðóïïó íå èçìåíÿåì
-		NULL, // DACL íå èçìåíÿåì
-		NULL); // SACL íå èçìåíÿåì
+		fileDescriptor, // Ð´ÐµÑÐºÑ€Ð¸Ð¿Ñ‚Ð¾Ñ€ Ñ„Ð°Ð¹Ð»Ð°
+		SE_FILE_OBJECT, // Ð¾Ð±ÑŠÐµÐºÑ‚ Ñ„Ð°Ð¹Ð»
+		OWNER_SECURITY_INFORMATION, // Ð¸Ð·Ð¼ÐµÐ½ÑÐµÐ¼ Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð¸Ð¼Ñ Ð²Ð»Ð°Ð´ÐµÐ»ÑŒÑ†Ð° Ñ„Ð°Ð¹Ð»Ð°
+		fileOwnerPSID, // Ð°Ð´Ñ€ÐµÑ Ð½Ð° SID Ð½Ð¾Ð²Ð¾Ð³Ð¾ Ð²Ð»Ð°Ð´ÐµÐ»ÑŒÑ†Ð°
+		NULL, // Ð¿ÐµÑ€Ð²Ð¸Ñ‡Ð½ÑƒÑŽ Ð³Ñ€ÑƒÐ¿Ð¿Ñƒ Ð½Ðµ Ð¸Ð·Ð¼ÐµÐ½ÑÐµÐ¼
+		NULL, // DACL Ð½Ðµ Ð¸Ð·Ð¼ÐµÐ½ÑÐµÐ¼
+		NULL); // SACL Ð½Ðµ Ð¸Ð·Ð¼ÐµÐ½ÑÐµÐ¼
 	if (dwErrCode != ERROR_SUCCESS)
 	{
 		printf("Set named security info failed.\n");
@@ -93,26 +93,26 @@ DWORD changeOwner(HANDLE fileDescriptor) {
 }
 
 DWORD changeACL(HANDLE fileDescriptor) {
-	PSECURITY_DESCRIPTOR pSecurityDescriptor; // ïîëó÷àåì äåñêðèïòîð áåçîïàñíîñòè ôàéëà
-	PACL pDacl; // Óêàçàòåëü íà DACL ôàéëà
-	PACL pSacl; // Óêàçàòåëü íà SACL ôàéëà
-	DWORD dwRetCode; // Êîä âîçâðàòà
+	PSECURITY_DESCRIPTOR pSecurityDescriptor; // Ð¿Ð¾Ð»ÑƒÑ‡Ð°ÐµÐ¼ Ð´ÐµÑÐºÑ€Ð¸Ð¿Ñ‚Ð¾Ñ€ Ð±ÐµÐ·Ð¾Ð¿Ð°ÑÐ½Ð¾ÑÑ‚Ð¸ Ñ„Ð°Ð¹Ð»Ð°
+	PACL pDacl; // Ð£ÐºÐ°Ð·Ð°Ñ‚ÐµÐ»ÑŒ Ð½Ð° DACL Ñ„Ð°Ð¹Ð»Ð°
+	PACL pSacl; // Ð£ÐºÐ°Ð·Ð°Ñ‚ÐµÐ»ÑŒ Ð½Ð° SACL Ñ„Ð°Ð¹Ð»Ð°
+	DWORD dwRetCode; // ÐšÐ¾Ð´ Ð²Ð¾Ð·Ð²Ñ€Ð°Ñ‚Ð°
 	DWORD flags[] = { SE_DACL_PROTECTED, SE_DACL_AUTO_INHERITED, SE_DACL_AUTO_INHERIT_REQ, SE_SACL_PROTECTED, SE_SACL_AUTO_INHERITED, SE_SACL_AUTO_INHERIT_REQ };
-	SECURITY_DESCRIPTOR_CONTROL allFlagsBitmask = 0; // Ôëàãè DACL è SACL, êîòîðûå áóäåì óñòàíàâëèâàòü èëè îáíóëÿòü
-	SECURITY_DESCRIPTOR_CONTROL flagsToSetBitmask = 0; // Ôëàãè DACL è SACl, êîòîðûå áóäåì óñòàíàâëèâàòü (ñîçäàâàòü)
-	size_t index; // Íîìåð, ïî êîòîðîìó áóäåì ïîëó÷àòü èç ìàññèâà flags ôëàã äëÿ óäàëåíèÿ èëè äîáàâëåíèÿ
-	WCHAR choice; // Âûáîð ïîëüçîâàòåëÿ, êîòîðûé áóäåì ïðåîáðàçîâûâàòü â ÷èñëî (èíäåêñ)
+	SECURITY_DESCRIPTOR_CONTROL allFlagsBitmask = 0; // Ð¤Ð»Ð°Ð³Ð¸ DACL Ð¸ SACL, ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ðµ Ð±ÑƒÐ´ÐµÐ¼ ÑƒÑÑ‚Ð°Ð½Ð°Ð²Ð»Ð¸Ð²Ð°Ñ‚ÑŒ Ð¸Ð»Ð¸ Ð¾Ð±Ð½ÑƒÐ»ÑÑ‚ÑŒ
+	SECURITY_DESCRIPTOR_CONTROL flagsToSetBitmask = 0; // Ð¤Ð»Ð°Ð³Ð¸ DACL Ð¸ SACl, ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ðµ Ð±ÑƒÐ´ÐµÐ¼ ÑƒÑÑ‚Ð°Ð½Ð°Ð²Ð»Ð¸Ð²Ð°Ñ‚ÑŒ (ÑÐ¾Ð·Ð´Ð°Ð²Ð°Ñ‚ÑŒ)
+	size_t index; // ÐÐ¾Ð¼ÐµÑ€, Ð¿Ð¾ ÐºÐ¾Ñ‚Ð¾Ñ€Ð¾Ð¼Ñƒ Ð±ÑƒÐ´ÐµÐ¼ Ð¿Ð¾Ð»ÑƒÑ‡Ð°Ñ‚ÑŒ Ð¸Ð· Ð¼Ð°ÑÑÐ¸Ð²Ð° flags Ñ„Ð»Ð°Ð³ Ð´Ð»Ñ ÑƒÐ´Ð°Ð»ÐµÐ½Ð¸Ñ Ð¸Ð»Ð¸ Ð´Ð¾Ð±Ð°Ð²Ð»ÐµÐ½Ð¸Ñ
+	WCHAR choice; // Ð’Ñ‹Ð±Ð¾Ñ€ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ, ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ð¹ Ð±ÑƒÐ´ÐµÐ¼ Ð¿Ñ€ÐµÐ¾Ð±Ñ€Ð°Ð·Ð¾Ð²Ñ‹Ð²Ð°Ñ‚ÑŒ Ð² Ñ‡Ð¸ÑÐ»Ð¾ (Ð¸Ð½Ð´ÐµÐºÑ)
 	
 
 	dwRetCode = GetSecurityInfo(
-		fileDescriptor, // äåñêðèïòîð ôàéëà
-		SE_FILE_OBJECT, // îáúåêò ôàéë
-		DACL_SECURITY_INFORMATION | SACL_SECURITY_INFORMATION | SCOPE_SECURITY_INFORMATION, // òèï èíôîðìàöèè
-		NULL, // óêàçàòåëü íà SID âëàäåëüöà íå íóæåí
-		NULL, // óêàçàòåëü íà ïåðâè÷íóþ ãðóïïó íå íóæåí 
-		&pDacl, // óêàçàòåëü íà DACL
-		&pSacl, // óêàçàòåëü íà SACL
-		&pSecurityDescriptor); // àäðåñ óêàçàòåëÿ íà SD
+		fileDescriptor, // Ð´ÐµÑÐºÑ€Ð¸Ð¿Ñ‚Ð¾Ñ€ Ñ„Ð°Ð¹Ð»Ð°
+		SE_FILE_OBJECT, // Ð¾Ð±ÑŠÐµÐºÑ‚ Ñ„Ð°Ð¹Ð»
+		DACL_SECURITY_INFORMATION | SACL_SECURITY_INFORMATION, // Ñ‚Ð¸Ð¿ Ð¸Ð½Ñ„Ð¾Ñ€Ð¼Ð°Ñ†Ð¸Ð¸
+		NULL, // ÑƒÐºÐ°Ð·Ð°Ñ‚ÐµÐ»ÑŒ Ð½Ð° SID Ð²Ð»Ð°Ð´ÐµÐ»ÑŒÑ†Ð° Ð½Ðµ Ð½ÑƒÐ¶ÐµÐ½
+		NULL, // ÑƒÐºÐ°Ð·Ð°Ñ‚ÐµÐ»ÑŒ Ð½Ð° Ð¿ÐµÑ€Ð²Ð¸Ñ‡Ð½ÑƒÑŽ Ð³Ñ€ÑƒÐ¿Ð¿Ñƒ Ð½Ðµ Ð½ÑƒÐ¶ÐµÐ½ 
+		&pDacl, // ÑƒÐºÐ°Ð·Ð°Ñ‚ÐµÐ»ÑŒ Ð½Ð° DACL
+		&pSacl, // ÑƒÐºÐ°Ð·Ð°Ñ‚ÐµÐ»ÑŒ Ð½Ð° SACL
+		&pSecurityDescriptor); // Ð°Ð´Ñ€ÐµÑ ÑƒÐºÐ°Ð·Ð°Ñ‚ÐµÐ»Ñ Ð½Ð° SD
 	if (dwRetCode != ERROR_SUCCESS)
 	{
 		printf("Get named security info failed.\n");
@@ -123,21 +123,21 @@ DWORD changeACL(HANDLE fileDescriptor) {
 	wprintf(L"\nEnter the security descriptor flags you want to set \
 (SE_DACL_PROTECTED - 1, SE_DACL_INHERITED - 2, SE_DACL_AUTO_INHERIT_REQ - 3, SE_SACL_PROTECTED - 4, SE_SACL_INHERITED - 5, SE_SACL_AUTO_INHERIT_REQ - 6).\n\
 For example, to set flags 1, 4 and 6, you need to enter 146: ");
-	choice = getwchar(); // Ñ÷èòûâàåì îäèí ñèìâîë
-	while (choice >= '1' && choice <= '6') { // Åñëè ïîëüçîâàòåëü ââåë íå öèôðó, ïðåêðàùàåì ñ÷èòûâàíèå
-		index = choice - '0' - 1; // Ïðåîáðàçóåì ñèìâîë char â öèôðó (int) âû÷èòàíèåì '0' è âû÷èòàåì åäèíèöó äëÿ ïîëó÷åíèÿ èíäåêñà
-		allFlagsBitmask |= flags[index]; // Äîáàâëÿåì â áèòîâóþ ìàñêó âñåõ ôëàãîâ ñîîòâåñòâóþùèé ôëàã
-		flagsToSetBitmask |= flags[index]; // Äîáàâëÿåì â áèòîâóþ ìàñêó ôëàãîâ äëÿ óñòàíîâêè òåêóùèé ôëàã
+	choice = getwchar(); // Ð¡Ñ‡Ð¸Ñ‚Ñ‹Ð²Ð°ÐµÐ¼ Ð¾Ð´Ð¸Ð½ ÑÐ¸Ð¼Ð²Ð¾Ð»
+	while (choice >= '1' && choice <= '6') { // Ð•ÑÐ»Ð¸ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒ Ð²Ð²ÐµÐ» Ð½Ðµ Ñ†Ð¸Ñ„Ñ€Ñƒ, Ð¿Ñ€ÐµÐºÑ€Ð°Ñ‰Ð°ÐµÐ¼ ÑÑ‡Ð¸Ñ‚Ñ‹Ð²Ð°Ð½Ð¸Ðµ
+		index = choice - '0' - 1; // ÐŸÑ€ÐµÐ¾Ð±Ñ€Ð°Ð·ÑƒÐµÐ¼ ÑÐ¸Ð¼Ð²Ð¾Ð» char Ð² Ñ†Ð¸Ñ„Ñ€Ñƒ (int) Ð²Ñ‹Ñ‡Ð¸Ñ‚Ð°Ð½Ð¸ÐµÐ¼ '0' Ð¸ Ð²Ñ‹Ñ‡Ð¸Ñ‚Ð°ÐµÐ¼ ÐµÐ´Ð¸Ð½Ð¸Ñ†Ñƒ Ð´Ð»Ñ Ð¿Ð¾Ð»ÑƒÑ‡ÐµÐ½Ð¸Ñ Ð¸Ð½Ð´ÐµÐºÑÐ°
+		allFlagsBitmask |= flags[index]; // Ð”Ð¾Ð±Ð°Ð²Ð»ÑÐµÐ¼ Ð² Ð±Ð¸Ñ‚Ð¾Ð²ÑƒÑŽ Ð¼Ð°ÑÐºÑƒ Ð²ÑÐµÑ… Ñ„Ð»Ð°Ð³Ð¾Ð² ÑÐ¾Ð¾Ñ‚Ð²ÐµÑÑ‚Ð²ÑƒÑŽÑ‰Ð¸Ð¹ Ñ„Ð»Ð°Ð³
+		flagsToSetBitmask |= flags[index]; // Ð”Ð¾Ð±Ð°Ð²Ð»ÑÐµÐ¼ Ð² Ð±Ð¸Ñ‚Ð¾Ð²ÑƒÑŽ Ð¼Ð°ÑÐºÑƒ Ñ„Ð»Ð°Ð³Ð¾Ð² Ð´Ð»Ñ ÑƒÑÑ‚Ð°Ð½Ð¾Ð²ÐºÐ¸ Ñ‚ÐµÐºÑƒÑ‰Ð¸Ð¹ Ñ„Ð»Ð°Ð³
 		choice = getwchar();
 	}
 
 	wprintf(L"\nEnter the security descriptor flags you want to delete \
 (SE_DACL_PROTECTED - 1, SE_DACL_INHERITED - 2, SE_DACL_AUTO_INHERIT_REQ - 3, SE_SACL_PROTECTED - 4, SE_SACL_INHERITED - 5, SE_SACL_AUTO_INHERIT_REQ - 6).\n\
 For example, to set flags 1, 4 and 6, you need to enter 146: ");
-	choice = getwchar(); // Ñ÷èòûâàåì îäèí ñèìâîë
-	while (choice >= '1' && choice <= '6') { // Åñëè ïîëüçîâàòåëü ââåë íå öèôðó, ïðåêðàùàåì ñ÷èòûâàíèå
-		index = choice - '0' - 1; // Ïðåîáðàçóåì ñèìâîë char â öèôðó (int) âû÷èòàíèåì '0' è âû÷èòàåì åäèíèöó äëÿ ïîëó÷åíèÿ èíäåêñà
-		allFlagsBitmask |= flags[index]; // Äîáàâëÿåì â áèòîâóþ ìàñêó âñåõ ôëàãîâ ñîîòâåñòâóþùèé ôëàã
+	choice = getwchar(); // Ð¡Ñ‡Ð¸Ñ‚Ñ‹Ð²Ð°ÐµÐ¼ Ð¾Ð´Ð¸Ð½ ÑÐ¸Ð¼Ð²Ð¾Ð»
+	while (choice >= '1' && choice <= '6') { // Ð•ÑÐ»Ð¸ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒ Ð²Ð²ÐµÐ» Ð½Ðµ Ñ†Ð¸Ñ„Ñ€Ñƒ, Ð¿Ñ€ÐµÐºÑ€Ð°Ñ‰Ð°ÐµÐ¼ ÑÑ‡Ð¸Ñ‚Ñ‹Ð²Ð°Ð½Ð¸Ðµ
+		index = choice - '0' - 1; // ÐŸÑ€ÐµÐ¾Ð±Ñ€Ð°Ð·ÑƒÐµÐ¼ ÑÐ¸Ð¼Ð²Ð¾Ð» char Ð² Ñ†Ð¸Ñ„Ñ€Ñƒ (int) Ð²Ñ‹Ñ‡Ð¸Ñ‚Ð°Ð½Ð¸ÐµÐ¼ '0' Ð¸ Ð²Ñ‹Ñ‡Ð¸Ñ‚Ð°ÐµÐ¼ ÐµÐ´Ð¸Ð½Ð¸Ñ†Ñƒ Ð´Ð»Ñ Ð¿Ð¾Ð»ÑƒÑ‡ÐµÐ½Ð¸Ñ Ð¸Ð½Ð´ÐµÐºÑÐ°
+		allFlagsBitmask |= flags[index]; // Ð”Ð¾Ð±Ð°Ð²Ð»ÑÐµÐ¼ Ð² Ð±Ð¸Ñ‚Ð¾Ð²ÑƒÑŽ Ð¼Ð°ÑÐºÑƒ Ð²ÑÐµÑ… Ñ„Ð»Ð°Ð³Ð¾Ð² ÑÐ¾Ð¾Ñ‚Ð²ÐµÑÑ‚Ð²ÑƒÑŽÑ‰Ð¸Ð¹ Ñ„Ð»Ð°Ð³
 		choice = getwchar();
 	}
 
@@ -152,15 +152,52 @@ For example, to set flags 1, 4 and 6, you need to enter 146: ");
 		return dwRetCode;
 	}
 
+	SECURITY_DESCRIPTOR_CONTROL wControl; // ÑƒÐ¿Ñ€Ð°Ð²Ð»ÑÑŽÑ‰Ð¸Ðµ Ñ„Ð»Ð°Ð³Ð¸ Ð¸Ð· SD 
+	DWORD dwRevision; // Ð²ÐµÑ€ÑÐ¸Ñ Ð´ÐµÑÐºÑ€Ð¸Ð¿Ñ‚Ð¾Ñ€Ð° Ð±ÐµÐ·Ð¾Ð¿Ð°ÑÐ½Ð¾ÑÑ‚Ð¸ 
+
+	if (!GetSecurityDescriptorControl(
+		pSecurityDescriptor,
+		&wControl,
+		&dwRevision))
+	{
+		dwRetCode = GetLastError();
+		printf("Get security descriptor control failed.\n");
+		printf("Error code: %u\n", dwRetCode);
+		return dwRetCode;
+	}
+
+	if (wControl & SE_DACL_AUTO_INHERITED)
+		printf("SE_DACL_AUTO_INHERITED\n");
+	if (wControl & SE_DACL_DEFAULTED)
+		printf("SE_DACL_DEFAULTED\n");
+	if (wControl & SE_DACL_PRESENT)
+		printf("SE_DACL_PRESENT\n");
+	if (wControl & SE_DACL_PROTECTED)
+		printf("SE_DACL_PROTECTED\n");
+	if (wControl & SE_GROUP_DEFAULTED)
+		printf("SE_GROUP_DEFAULTED\n");
+	if (wControl & SE_OWNER_DEFAULTED)
+		printf("SE_OWNER_DEFAULTED\n");
+	if (wControl & SE_SACL_AUTO_INHERITED)
+		printf("SE_SACL_AUTO_INHERITED\n");
+	if (wControl & SE_SACL_DEFAULTED)
+		printf("SE_SACL_DEFAULTED\n");
+	if (wControl & SE_SACL_PRESENT)
+		printf("SE_SACL_PRESENT\n");
+	if (wControl & SE_SACL_PROTECTED)
+		printf("SE_SACL_PROTECTED\n");
+	if (wControl & SE_SELF_RELATIVE)
+		printf("SE_SELF_RELATIVE\n");
+
 	dwRetCode = SetSecurityInfo(
-		fileDescriptor, // äåñêðèïòîð ôàéëà
-		SE_FILE_OBJECT, // îáúåêò ôàéë
+		fileDescriptor, // Ð´ÐµÑÐºÑ€Ð¸Ð¿Ñ‚Ð¾Ñ€ Ñ„Ð°Ð¹Ð»Ð°
+		SE_FILE_OBJECT, // Ð¾Ð±ÑŠÐµÐºÑ‚ Ñ„Ð°Ð¹Ð»
 		DACL_SECURITY_INFORMATION | SACL_SECURITY_INFORMATION |
-		PROTECTED_DACL_SECURITY_INFORMATION | PROTECTED_SACL_SECURITY_INFORMATION, // èçìåíÿåì èíôîðìàöèþ î DACL
-		NULL, // âëàäåëüöà íå èçìåíÿåì
-		NULL, // ïåðâè÷íóþ ãðóïïó íå èçìåíÿåì
-		pDacl, // DACL èçìåíÿåì
-		pSacl); // SACL èçìåíÿåì
+		PROTECTED_DACL_SECURITY_INFORMATION | PROTECTED_SACL_SECURITY_INFORMATION, // Ð¸Ð·Ð¼ÐµÐ½ÑÐµÐ¼ Ð¸Ð½Ñ„Ð¾Ñ€Ð¼Ð°Ñ†Ð¸ÑŽ Ð¾ DACL
+		NULL, // Ð²Ð»Ð°Ð´ÐµÐ»ÑŒÑ†Ð° Ð½Ðµ Ð¸Ð·Ð¼ÐµÐ½ÑÐµÐ¼
+		NULL, // Ð¿ÐµÑ€Ð²Ð¸Ñ‡Ð½ÑƒÑŽ Ð³Ñ€ÑƒÐ¿Ð¿Ñƒ Ð½Ðµ Ð¸Ð·Ð¼ÐµÐ½ÑÐµÐ¼
+		pDacl, // DACL Ð¸Ð·Ð¼ÐµÐ½ÑÐµÐ¼
+		pSacl); // SACL Ð¸Ð·Ð¼ÐµÐ½ÑÐµÐ¼
 	if (dwRetCode != ERROR_SUCCESS)
 	{
 		printf("Set named security info failed.\n");

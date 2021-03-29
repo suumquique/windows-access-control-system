@@ -1,67 +1,67 @@
 #include "main.h"
 
 PISECURITY_DESCRIPTOR getSecurityDescriptor(HANDLE fileDescriptor) {
-	PISECURITY_DESCRIPTOR pSecurityDescriptor; // указатель на SD
-	DWORD dwErrCode; // код возможной ошибки
+	PISECURITY_DESCRIPTOR pSecurityDescriptor; // СѓРєР°Р·Р°С‚РµР»СЊ РЅР° SD
+	DWORD dwErrCode; // РєРѕРґ РІРѕР·РјРѕР¶РЅРѕР№ РѕС€РёР±РєРё
 
-	// получаем дескриптор безопасности файла
+	// РїРѕР»СѓС‡Р°РµРј РґРµСЃРєСЂРёРїС‚РѕСЂ Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё С„Р°Р№Р»Р°
 	dwErrCode = GetSecurityInfo(
-		fileDescriptor, // дескриптор файла
-		SE_FILE_OBJECT, // объект файл
+		fileDescriptor, // РґРµСЃРєСЂРёРїС‚РѕСЂ С„Р°Р№Р»Р°
+		SE_FILE_OBJECT, // РѕР±СЉРµРєС‚ С„Р°Р№Р»
 		GROUP_SECURITY_INFORMATION | OWNER_SECURITY_INFORMATION | DACL_SECURITY_INFORMATION | SACL_SECURITY_INFORMATION |
 		BACKUP_SECURITY_INFORMATION | ATTRIBUTE_SECURITY_INFORMATION | LABEL_SECURITY_INFORMATION | PROTECTED_DACL_SECURITY_INFORMATION |
 		PROTECTED_SACL_SECURITY_INFORMATION | SCOPE_SECURITY_INFORMATION,
-		NULL, // адрес указателя на SID владельца не нужен
-		NULL, // адрес указателя на первичную группу не нужен
-		NULL, // указатель на DACL не нужен
-		NULL, // указатель на SACL не нужен
-		(PSECURITY_DESCRIPTOR*) &pSecurityDescriptor); // адрес указателя на SD
+		NULL, // Р°РґСЂРµСЃ СѓРєР°Р·Р°С‚РµР»СЏ РЅР° SID РІР»Р°РґРµР»СЊС†Р° РЅРµ РЅСѓР¶РµРЅ
+		NULL, // Р°РґСЂРµСЃ СѓРєР°Р·Р°С‚РµР»СЏ РЅР° РїРµСЂРІРёС‡РЅСѓСЋ РіСЂСѓРїРїСѓ РЅРµ РЅСѓР¶РµРЅ
+		NULL, // СѓРєР°Р·Р°С‚РµР»СЊ РЅР° DACL РЅРµ РЅСѓР¶РµРЅ
+		NULL, // СѓРєР°Р·Р°С‚РµР»СЊ РЅР° SACL РЅРµ РЅСѓР¶РµРЅ
+		(PSECURITY_DESCRIPTOR*) &pSecurityDescriptor); // Р°РґСЂРµСЃ СѓРєР°Р·Р°С‚РµР»СЏ РЅР° SD
 	if (dwErrCode != ERROR_SUCCESS) {
 		printf("Get security info failed.\n");
 		printf("Error code: %u\n", dwErrCode);
 		exit(dwErrCode);
 	}
 	
-	// Проверяем, получили ли мы валидный дескриптор безопасности
+	// РџСЂРѕРІРµСЂСЏРµРј, РїРѕР»СѓС‡РёР»Рё Р»Рё РјС‹ РІР°Р»РёРґРЅС‹Р№ РґРµСЃРєСЂРёРїС‚РѕСЂ Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё
 	if (!IsValidSecurityDescriptor(pSecurityDescriptor))
 	{
 		dwErrCode = GetLastError();
 		perror("Security descriptor is invalid.\n");
 		printf("The last error code: %u\n", dwErrCode);
-		exit(dwErrCode); // Если невалидный - выходим из программы
+		exit(dwErrCode); // Р•СЃР»Рё РЅРµРІР°Р»РёРґРЅС‹Р№ - РІС‹С…РѕРґРёРј РёР· РїСЂРѕРіСЂР°РјРјС‹
 	}
 
 	return pSecurityDescriptor;
 }
 
 DWORD getAccessToSACL() {
-	HANDLE hProcess; // дескриптор процесса
-	HANDLE hTokenHandle; // дескриптор маркера доступа
+	HANDLE hProcess; // РґРµСЃРєСЂРёРїС‚РѕСЂ РїСЂРѕС†РµСЃСЃР°
+	HANDLE hTokenHandle; // РґРµСЃРєСЂРёРїС‚РѕСЂ РјР°СЂРєРµСЂР° РґРѕСЃС‚СѓРїР°
 	struct {
 		DWORD PrivilegeCount;
 		LUID_AND_ATTRIBUTES Privileges[2];
-	} tp; // Делаем свою структуру вместо TOKEN_PRIVILEGES, поскольку требуется массив из двух привилегий
-	DWORD dwErrCode; // код возврата
+	} tp; // Р”РµР»Р°РµРј СЃРІРѕСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ РІРјРµСЃС‚Рѕ TOKEN_PRIVILEGES, РїРѕСЃРєРѕР»СЊРєСѓ С‚СЂРµР±СѓРµС‚СЃСЏ РјР°СЃСЃРёРІ РёР· РґРІСѓС… РїСЂРёРІРёР»РµРіРёР№
+	DWORD dwErrCode; // РєРѕРґ РІРѕР·РІСЂР°С‚Р°
 
-	// получаем дескриптор процесса
+	// РїРѕР»СѓС‡Р°РµРј РґРµСЃРєСЂРёРїС‚РѕСЂ РїСЂРѕС†РµСЃСЃР°
 	hProcess = GetCurrentProcess();
-	// получаем маркер доступа процесса
+	// РїРѕР»СѓС‡Р°РµРј РјР°СЂРєРµСЂ РґРѕСЃС‚СѓРїР° РїСЂРѕС†РµСЃСЃР°
 	if (!OpenProcessToken(
-		hProcess, // дескриптор процесса
-		TOKEN_ALL_ACCESS, // полный доступ к маркеру доступа
-		&hTokenHandle)) // дескриптор маркера
+		hProcess, // РґРµСЃРєСЂРёРїС‚РѕСЂ РїСЂРѕС†РµСЃСЃР°
+		TOKEN_ALL_ACCESS, // РїРѕР»РЅС‹Р№ РґРѕСЃС‚СѓРї Рє РјР°СЂРєРµСЂСѓ РґРѕСЃС‚СѓРїР°
+		&hTokenHandle)) // РґРµСЃРєСЂРёРїС‚РѕСЂ РјР°СЂРєРµСЂР°
 	{
 		dwErrCode = GetLastError();
 		printf("Open process token failed: %u\n", dwErrCode);
 		return dwErrCode;
 	}
 
-	// устанавливаем общее количество привилегий
+	// СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј РѕР±С‰РµРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РїСЂРёРІРёР»РµРіРёР№
 	tp.PrivilegeCount = 2;
-	// определяем идентификатор привилегии для установки аудита
+	// РѕРїСЂРµРґРµР»СЏРµРј РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РїСЂРёРІРёР»РµРіРёРё РґР»СЏ СѓСЃС‚Р°РЅРѕРІРєРё Р°СѓРґРёС‚Р°
 	if (!LookupPrivilegeValue(
-		NULL, // ищем идентификатор привилегии на локальном компьютере
-		SE_SECURITY_NAME, // привилегия для аудита
+		NULL, // РёС‰РµРј РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РїСЂРёРІРёР»РµРіРёРё РЅР° Р»РѕРєР°Р»СЊРЅРѕРј РєРѕРјРїСЊСЋС‚РµСЂРµ
+		SE_SECURITY_NAME, // РїСЂРёРІРёР»РµРіРёСЏ РґР»СЏ Р°СѓРґРёС‚Р°
 		&(tp.Privileges[0].Luid)))
 	{
 		dwErrCode = GetLastError();
@@ -69,13 +69,13 @@ DWORD getAccessToSACL() {
 		printf("Error code: %d\n", dwErrCode);
 		return dwErrCode;
 	}
-	// разрешаем привилегию аудита
+	// СЂР°Р·СЂРµС€Р°РµРј РїСЂРёРІРёР»РµРіРёСЋ Р°СѓРґРёС‚Р°
 	tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
 
-	// определяем идентификатор привилегии для установки новых овнеров
+	// РѕРїСЂРµРґРµР»СЏРµРј РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РїСЂРёРІРёР»РµРіРёРё РґР»СЏ СѓСЃС‚Р°РЅРѕРІРєРё РЅРѕРІС‹С… РѕРІРЅРµСЂРѕРІ
 	if (!LookupPrivilegeValue(
-		NULL, // ищем идентификатор привилегии на локальном компьютере
-		SE_TAKE_OWNERSHIP_NAME, // привилегия для измнения овнеров
+		NULL, // РёС‰РµРј РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РїСЂРёРІРёР»РµРіРёРё РЅР° Р»РѕРєР°Р»СЊРЅРѕРј РєРѕРјРїСЊСЋС‚РµСЂРµ
+		SE_TAKE_OWNERSHIP_NAME, // РїСЂРёРІРёР»РµРіРёСЏ РґР»СЏ РёР·РјРЅРµРЅРёСЏ РѕРІРЅРµСЂРѕРІ
 		&(tp.Privileges[1].Luid)))
 	{
 		dwErrCode = GetLastError();
@@ -83,17 +83,17 @@ DWORD getAccessToSACL() {
 		printf("Error code: %d\n", dwErrCode);
 		return dwErrCode;
 	}
-	// разрешаем привилегию установки новых владельцев
+	// СЂР°Р·СЂРµС€Р°РµРј РїСЂРёРІРёР»РµРіРёСЋ СѓСЃС‚Р°РЅРѕРІРєРё РЅРѕРІС‹С… РІР»Р°РґРµР»СЊС†РµРІ
 	tp.Privileges[1].Attributes = SE_PRIVILEGE_ENABLED;
 
-	// Устанавливаем токен с привилегиями для текущего процесса
+	// РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј С‚РѕРєРµРЅ СЃ РїСЂРёРІРёР»РµРіРёСЏРјРё РґР»СЏ С‚РµРєСѓС‰РµРіРѕ РїСЂРѕС†РµСЃСЃР°
 	if (!AdjustTokenPrivileges(
-		hTokenHandle, // дескриптор маркера доступа процесса
-		FALSE, // не запрещаем все привилегии
-		(PTOKEN_PRIVILEGES)&tp, // адрес привилегий
-		0, // длины буфера нет
-		NULL, // предыдущее состояние привилегий не нужно
-		NULL)) // длина буфера не нужна
+		hTokenHandle, // РґРµСЃРєСЂРёРїС‚РѕСЂ РјР°СЂРєРµСЂР° РґРѕСЃС‚СѓРїР° РїСЂРѕС†РµСЃСЃР°
+		FALSE, // РЅРµ Р·Р°РїСЂРµС‰Р°РµРј РІСЃРµ РїСЂРёРІРёР»РµРіРёРё
+		(PTOKEN_PRIVILEGES)&tp, // Р°РґСЂРµСЃ РїСЂРёРІРёР»РµРіРёР№
+		0, // РґР»РёРЅС‹ Р±СѓС„РµСЂР° РЅРµС‚
+		NULL, // РїСЂРµРґС‹РґСѓС‰РµРµ СЃРѕСЃС‚РѕСЏРЅРёРµ РїСЂРёРІРёР»РµРіРёР№ РЅРµ РЅСѓР¶РЅРѕ
+		NULL)) // РґР»РёРЅР° Р±СѓС„РµСЂР° РЅРµ РЅСѓР¶РЅР°
 	{
 		dwErrCode = GetLastError();
 		printf("Lookup privilege value failed.\n");

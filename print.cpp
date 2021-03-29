@@ -7,17 +7,17 @@ Account getUserAccountFromSID(PSID lpSID) {
 	DWORD dwLengthOfUserName = 0, dwLengthOfDomainName = 0;
 	SID_NAME_USE type_of_SID;
 	if (!LookupAccountSid(
-		NULL, // ищем на локальном компьютере
-		lpSID, // указатель на SID
-		userName, // имя пользователя
-		&dwLengthOfUserName, // длина имени пользователя
-		lpDomainName, // определяем имя домена
-		&dwLengthOfDomainName, // длина имени домена
-		&type_of_SID)) // тип учетной записи
+		NULL, // РёС‰РµРј РЅР° Р»РѕРєР°Р»СЊРЅРѕРј РєРѕРјРїСЊСЋС‚РµСЂРµ
+		lpSID, // СѓРєР°Р·Р°С‚РµР»СЊ РЅР° SID
+		userName, // РёРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+		&dwLengthOfUserName, // РґР»РёРЅР° РёРјРµРЅРё РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+		lpDomainName, // РѕРїСЂРµРґРµР»СЏРµРј РёРјСЏ РґРѕРјРµРЅР°
+		&dwLengthOfDomainName, // РґР»РёРЅР° РёРјРµРЅРё РґРѕРјРµРЅР°
+		&type_of_SID)) // С‚РёРї СѓС‡РµС‚РЅРѕР№ Р·Р°РїРёСЃРё
 	{
 		dwErrCode = GetLastError();
 		if (dwErrCode == ERROR_INSUFFICIENT_BUFFER) {
-			// распределяем память под имя домена
+			// СЂР°СЃРїСЂРµРґРµР»СЏРµРј РїР°РјСЏС‚СЊ РїРѕРґ РёРјСЏ РґРѕРјРµРЅР°
 			lpDomainName = (LPTSTR) new wchar_t[dwLengthOfDomainName];
 			userName = (LPTSTR) new wchar_t[dwLengthOfUserName];
 		}
@@ -26,15 +26,15 @@ Account getUserAccountFromSID(PSID lpSID) {
 			printf("Error code: %d\n", dwErrCode);
 		}
 	}
-	// определяем имя учетной записи по SID
+	// РѕРїСЂРµРґРµР»СЏРµРј РёРјСЏ СѓС‡РµС‚РЅРѕР№ Р·Р°РїРёСЃРё РїРѕ SID
 	if (!LookupAccountSid(
-		NULL, // ищем на локальном компьютере
-		lpSID, // указатель на SID
-		userName, // имя пользователя
-		&dwLengthOfUserName, // длина имени пользователя
-		lpDomainName, // определяем имя домена 
-		&dwLengthOfDomainName, // длина имени домена
-		&type_of_SID)) // тип учетной записи
+		NULL, // РёС‰РµРј РЅР° Р»РѕРєР°Р»СЊРЅРѕРј РєРѕРјРїСЊСЋС‚РµСЂРµ
+		lpSID, // СѓРєР°Р·Р°С‚РµР»СЊ РЅР° SID
+		userName, // РёРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+		&dwLengthOfUserName, // РґР»РёРЅР° РёРјРµРЅРё РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+		lpDomainName, // РѕРїСЂРµРґРµР»СЏРµРј РёРјСЏ РґРѕРјРµРЅР° 
+		&dwLengthOfDomainName, // РґР»РёРЅР° РёРјРµРЅРё РґРѕРјРµРЅР°
+		&type_of_SID)) // С‚РёРї СѓС‡РµС‚РЅРѕР№ Р·Р°РїРёСЃРё
 	{
 		dwErrCode = GetLastError();
 		printf("Lookup account SID failed.\n");
@@ -46,11 +46,11 @@ Account getUserAccountFromSID(PSID lpSID) {
 }
 
 DWORD printAllSecurityDescriptorInformation(PSECURITY_DESCRIPTOR securityDescriptorPtr) {
-	SECURITY_DESCRIPTOR_CONTROL wControl; // управляющие флаги из SD 
-	LPWSTR StringSecurityDescriptor; // строка с SD
-	DWORD StringSecurityDescriptorLen; // длина строки с SD 
-	DWORD dwRevision; // версия дескриптора безопасности 
-	DWORD dwRetCode; // код возврата
+	SECURITY_DESCRIPTOR_CONTROL wControl; // СѓРїСЂР°РІР»СЏСЋС‰РёРµ С„Р»Р°РіРё РёР· SD 
+	LPWSTR StringSecurityDescriptor; // СЃС‚СЂРѕРєР° СЃ SD
+	DWORD StringSecurityDescriptorLen; // РґР»РёРЅР° СЃС‚СЂРѕРєРё СЃ SD 
+	DWORD dwRevision; // РІРµСЂСЃРёСЏ РґРµСЃРєСЂРёРїС‚РѕСЂР° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё 
+	DWORD dwRetCode; // РєРѕРґ РІРѕР·РІСЂР°С‚Р°
 
 	if (!GetSecurityDescriptorControl(
 		securityDescriptorPtr,
@@ -63,7 +63,7 @@ DWORD printAllSecurityDescriptorInformation(PSECURITY_DESCRIPTOR securityDescrip
 		return dwRetCode;
 	}
 	printf("\nThe following control flags are set: \n");
-	// определяем информацию из управляющего слова
+	// РѕРїСЂРµРґРµР»СЏРµРј РёРЅС„РѕСЂРјР°С†РёСЋ РёР· СѓРїСЂР°РІР»СЏСЋС‰РµРіРѕ СЃР»РѕРІР°
 	if (wControl & SE_DACL_AUTO_INHERITED)
 		printf("SE_DACL_AUTO_INHERITED\n");
 	if (wControl & SE_DACL_DEFAULTED)
@@ -86,15 +86,15 @@ DWORD printAllSecurityDescriptorInformation(PSECURITY_DESCRIPTOR securityDescrip
 		printf("SE_SACL_PROTECTED\n");
 	if (wControl & SE_SELF_RELATIVE)
 		printf("SE_SELF_RELATIVE\n");
-	// выводим на печать версию дескриптора безопасности
+	// РІС‹РІРѕРґРёРј РЅР° РїРµС‡Р°С‚СЊ РІРµСЂСЃРёСЋ РґРµСЃРєСЂРёРїС‚РѕСЂР° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё
 	printf("\nDescriptor revision: %u\n", dwRevision);
 	if (!ConvertSecurityDescriptorToStringSecurityDescriptorW(
-		securityDescriptorPtr, // адрес дескриптора безопасности
-		SDDL_REVISION_1, // версия языка описания
+		securityDescriptorPtr, // Р°РґСЂРµСЃ РґРµСЃРєСЂРёРїС‚РѕСЂР° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё
+		SDDL_REVISION_1, // РІРµСЂСЃРёСЏ СЏР·С‹РєР° РѕРїРёСЃР°РЅРёСЏ
 		OWNER_SECURITY_INFORMATION | GROUP_SECURITY_INFORMATION |
 		DACL_SECURITY_INFORMATION | SACL_SECURITY_INFORMATION,
-		&StringSecurityDescriptor, // буфер для строки
-		&StringSecurityDescriptorLen)) // длина буфера
+		&StringSecurityDescriptor, // Р±СѓС„РµСЂ РґР»СЏ СЃС‚СЂРѕРєРё
+		&StringSecurityDescriptorLen)) // РґР»РёРЅР° Р±СѓС„РµСЂР°
 	{
 		dwRetCode = GetLastError();
 		wprintf(L"Convert security descriptor to string security descriptor failed.");
@@ -109,14 +109,14 @@ DWORD printAllSecurityDescriptorInformation(PSECURITY_DESCRIPTOR securityDescrip
 }
 
 DWORD printFileOwnerInfo(PSECURITY_DESCRIPTOR securityDescriptorPtr) {
-	BOOL bOwnerDefaulted = FALSE; // флаг владельца по умолчанию
-	BOOL bGroupDefaulted = FALSE; // флаг первичной группы по умолчанию
-	PSID pSidOwner = NULL; // указатель на SID владельца объекта 
-	PSID pSidGroup = NULL; // указатель на SID первичной группы объекта
-	LPWSTR lpStringSid; // указатель на строку SID
-	DWORD dwRetCode; // код возврата
+	BOOL bOwnerDefaulted = FALSE; // С„Р»Р°Рі РІР»Р°РґРµР»СЊС†Р° РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
+	BOOL bGroupDefaulted = FALSE; // С„Р»Р°Рі РїРµСЂРІРёС‡РЅРѕР№ РіСЂСѓРїРїС‹ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
+	PSID pSidOwner = NULL; // СѓРєР°Р·Р°С‚РµР»СЊ РЅР° SID РІР»Р°РґРµР»СЊС†Р° РѕР±СЉРµРєС‚Р° 
+	PSID pSidGroup = NULL; // СѓРєР°Р·Р°С‚РµР»СЊ РЅР° SID РїРµСЂРІРёС‡РЅРѕР№ РіСЂСѓРїРїС‹ РѕР±СЉРµРєС‚Р°
+	LPWSTR lpStringSid; // СѓРєР°Р·Р°С‚РµР»СЊ РЅР° СЃС‚СЂРѕРєСѓ SID
+	DWORD dwRetCode; // РєРѕРґ РІРѕР·РІСЂР°С‚Р°
 
-	// Получаем владельца объекта по дескриптору безопасности
+	// РџРѕР»СѓС‡Р°РµРј РІР»Р°РґРµР»СЊС†Р° РѕР±СЉРµРєС‚Р° РїРѕ РґРµСЃРєСЂРёРїС‚РѕСЂСѓ Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё
 	if (!GetSecurityDescriptorOwner(
 		securityDescriptorPtr,
 		&pSidOwner,
@@ -127,7 +127,7 @@ DWORD printFileOwnerInfo(PSECURITY_DESCRIPTOR securityDescriptorPtr) {
 		printf("Error code: %u\n", dwRetCode);
 		return dwRetCode;
 	}
-	// получаем SD первичной группы владельца объекта
+	// РїРѕР»СѓС‡Р°РµРј SD РїРµСЂРІРёС‡РЅРѕР№ РіСЂСѓРїРїС‹ РІР»Р°РґРµР»СЊС†Р° РѕР±СЉРµРєС‚Р°
 	if (!GetSecurityDescriptorGroup(
 		securityDescriptorPtr,
 		&pSidGroup,
@@ -139,31 +139,31 @@ DWORD printFileOwnerInfo(PSECURITY_DESCRIPTOR securityDescriptorPtr) {
 		return dwRetCode;
 	}
 
-	// преобразуем SID владельца в строку
+	// РїСЂРµРѕР±СЂР°Р·СѓРµРј SID РІР»Р°РґРµР»СЊС†Р° РІ СЃС‚СЂРѕРєСѓ
 	if (!ConvertSidToStringSidW(pSidOwner, &lpStringSid)) {
 		printf("Convert SID to string SID failed.");
 		dwRetCode = GetLastError();
 		return dwRetCode;
 	}
-	// печатаем SID владельца
+	// РїРµС‡Р°С‚Р°РµРј SID РІР»Р°РґРµР»СЊС†Р°
 	wprintf(L"File owner SID: %s\n", lpStringSid);
-	// освобождаем память для строки
+	// РѕСЃРІРѕР±РѕР¶РґР°РµРј РїР°РјСЏС‚СЊ РґР»СЏ СЃС‚СЂРѕРєРё
 	LocalFree(lpStringSid);
 
-	// преобразуем SID первичной группы в строку
+	// РїСЂРµРѕР±СЂР°Р·СѓРµРј SID РїРµСЂРІРёС‡РЅРѕР№ РіСЂСѓРїРїС‹ РІ СЃС‚СЂРѕРєСѓ
 	if (!ConvertSidToStringSidW(pSidGroup, &lpStringSid)) {
 		printf("Convert SID to string SID failed.");
 		dwRetCode = GetLastError();
 		return dwRetCode;
 	}
-	// печатаем SID первичной группы
+	// РїРµС‡Р°С‚Р°РµРј SID РїРµСЂРІРёС‡РЅРѕР№ РіСЂСѓРїРїС‹
 	wprintf(L"File group SID: %s\n", lpStringSid);
-	// освобождаем память для строки
+	// РѕСЃРІРѕР±РѕР¶РґР°РµРј РїР°РјСЏС‚СЊ РґР»СЏ СЃС‚СЂРѕРєРё
 	LocalFree(lpStringSid);
 
-	// Получаем структуру, содержащую юзернейм и домен овнера (владельца) файла
+	// РџРѕР»СѓС‡Р°РµРј СЃС‚СЂСѓРєС‚СѓСЂСѓ, СЃРѕРґРµСЂР¶Р°С‰СѓСЋ СЋР·РµСЂРЅРµР№Рј Рё РґРѕРјРµРЅ РѕРІРЅРµСЂР° (РІР»Р°РґРµР»СЊС†Р°) С„Р°Р№Р»Р°
 	Account fileOwner = getUserAccountFromSID(pSidOwner);
-	// Печатаем юзернейм и имя домена
+	// РџРµС‡Р°С‚Р°РµРј СЋР·РµСЂРЅРµР№Рј Рё РёРјСЏ РґРѕРјРµРЅР°
 	wprintf(L"File owner name: %s\n", fileOwner.userName);
 	wprintf(L"File owner domain: %s\n", fileOwner.domainName);
 
@@ -174,8 +174,8 @@ DWORD printFileOwnerInfo(PSECURITY_DESCRIPTOR securityDescriptorPtr) {
 }
 
 DWORD printFileSecurityInfo(HANDLE fileDescriptor) {
-	PISECURITY_DESCRIPTOR pSecurityDescriptor = getSecurityDescriptor(fileDescriptor); // указатель на SD
-	DWORD dwRetCode = ERROR_SUCCESS; // код возврата, по умолчанию все нормально
+	PISECURITY_DESCRIPTOR pSecurityDescriptor = getSecurityDescriptor(fileDescriptor); // СѓРєР°Р·Р°С‚РµР»СЊ РЅР° SD
+	DWORD dwRetCode = ERROR_SUCCESS; // РєРѕРґ РІРѕР·РІСЂР°С‚Р°, РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РІСЃРµ РЅРѕСЂРјР°Р»СЊРЅРѕ
 	
 	if (printFileOwnerInfo(pSecurityDescriptor) != ERROR_SUCCESS) {
 		wprintf(L"Unable to print file owner info\n");
@@ -186,7 +186,7 @@ DWORD printFileSecurityInfo(HANDLE fileDescriptor) {
 		dwRetCode |= 2;
 	}
 
-	// освобождаем память для дескриптора
+	// РѕСЃРІРѕР±РѕР¶РґР°РµРј РїР°РјСЏС‚СЊ РґР»СЏ РґРµСЃРєСЂРёРїС‚РѕСЂР°
 	LocalFree(pSecurityDescriptor);
 
 	return dwRetCode;
