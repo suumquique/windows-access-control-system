@@ -1,4 +1,4 @@
-#include "main.h"
+#include "main.hpp"
 
 #define MAX_FILE_PATH_LEN 1000
 

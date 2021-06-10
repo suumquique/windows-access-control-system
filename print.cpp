@@ -1,4 +1,4 @@
-#include "main.h"
+#include "main.hpp"
 
 Account getUserAccountFromSID(PSID lpSID) {
 	LPTSTR lpDomainName = NULL, userName = NULL;

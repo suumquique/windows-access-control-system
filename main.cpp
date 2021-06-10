@@ -1,5 +1,5 @@
 // Файл с заголовками всех функций и библиотек проекта
-#include "main.h"
+#include "main.hpp"
 
 int main(){
 	DWORD dwErrCode = getAccessToSACL();

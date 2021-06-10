@@ -1,4 +1,4 @@
-#include "main.h"
+#include "main.hpp"
 
 PSID getUserSIDByAccountName(wchar_t* accountName) {
 	wchar_t* lpDomainName = NULL;

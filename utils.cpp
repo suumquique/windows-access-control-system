@@ -1,4 +1,4 @@
-#include "main.h"
+#include "main.hpp"
 
 PISECURITY_DESCRIPTOR getSecurityDescriptor(HANDLE fileDescriptor) {
 	PISECURITY_DESCRIPTOR pSecurityDescriptor; // указатель на SD
