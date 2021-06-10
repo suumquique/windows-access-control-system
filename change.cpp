@@ -166,29 +166,6 @@ For example, to set flags 1, 4 and 6, you need to enter 146: ");
 		return dwRetCode;
 	}
 
-	if (wControl & SE_DACL_AUTO_INHERITED)
-		printf("SE_DACL_AUTO_INHERITED\n");
-	if (wControl & SE_DACL_DEFAULTED)
-		printf("SE_DACL_DEFAULTED\n");
-	if (wControl & SE_DACL_PRESENT)
-		printf("SE_DACL_PRESENT\n");
-	if (wControl & SE_DACL_PROTECTED)
-		printf("SE_DACL_PROTECTED\n");
-	if (wControl & SE_GROUP_DEFAULTED)
-		printf("SE_GROUP_DEFAULTED\n");
-	if (wControl & SE_OWNER_DEFAULTED)
-		printf("SE_OWNER_DEFAULTED\n");
-	if (wControl & SE_SACL_AUTO_INHERITED)
-		printf("SE_SACL_AUTO_INHERITED\n");
-	if (wControl & SE_SACL_DEFAULTED)
-		printf("SE_SACL_DEFAULTED\n");
-	if (wControl & SE_SACL_PRESENT)
-		printf("SE_SACL_PRESENT\n");
-	if (wControl & SE_SACL_PROTECTED)
-		printf("SE_SACL_PROTECTED\n");
-	if (wControl & SE_SELF_RELATIVE)
-		printf("SE_SELF_RELATIVE\n");
-
 	dwRetCode = SetSecurityInfo(
 		fileDescriptor, // дескриптор файла
 		SE_FILE_OBJECT, // объект файл
